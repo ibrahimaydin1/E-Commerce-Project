@@ -1,0 +1,206 @@
+@model ECommerceProject.Models.Product
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+            <li class="breadcrumb-item"><a href="/Product/Index">Ürünler</a></li>
+            <li class="breadcrumb-item"><a href="/Category/Products/@Model.CategoryId">@Model.Category?.Name</a></li>
+            <li class="breadcrumb-item active">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body p-0">
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" class="img-fluid w-100" alt="@Model.Name">
+                    }
+                    else
+                    {
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                            <i class="fas fa-image fa-5x text-muted"></i>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <h1 class="mb-3">@Model.Name</h1>
+            
+            <div class="mb-3">
+                <span class="badge bg-secondary">@Model.Category?.Name</span>
+                @if (Model.IsFeatured)
+                {
+                    <span class="badge bg-warning">Öne Çıkan</span>
+                }
+            </div>
+            
+            <div class="mb-4">
+                <h3 class="text-primary">
+                    @if (Model.DiscountedPrice.HasValue)
+                    {
+                        <span class="text-decoration-line-through text-muted">@Model.Price.ToString("F2") TL</span>
+                        <span class="text-danger ms-2">@Model.DiscountedPrice.Value.ToString("F2") TL</span>
+                    }
+                    else
+                    {
+                        @:@Model.Price.ToString("F2") TL
+                    }
+                </h3>
+            </div>
+            
+            <div class="mb-4">
+                <h5>Ürün Açıklaması</h5>
+                <p>@Model.Description</p>
+            </div>
+            
+            <div class="mb-4">
+                <div class="row">
+                    <div class="col-6">
+                        <strong>SKU:</strong> @Model.SKU
+                    </div>
+                    <div class="col-6">
+                        <strong>Stok:</strong> 
+                        @if (Model.StockQuantity > 0)
+                        {
+                            <span class="text-success">@Model.StockQuantity adet</span>
+                        }
+                        else
+                        {
+                            <span class="text-danger">Stokta yok</span>
+                        }
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <div class="d-flex align-items-center">
+                    <label for="quantity" class="me-3">Adet:</label>
+                    <div class="input-group" style="width: 150px;">
+                        <button class="btn btn-outline-secondary" type="button" id="decrease-qty">-</button>
+                        <input type="number" class="form-control text-center" id="quantity" value="1" min="1" max="@Model.StockQuantity">
+                        <button class="btn btn-outline-secondary" type="button" id="increase-qty">+</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                @if (Model.StockQuantity > 0)
+                {
+                    <button class="btn btn-primary btn-lg me-3" id="add-to-cart-btn">
+                        <i class="fas fa-shopping-cart me-2"></i>Sepete Ekle
+                    </button>
+                }
+                else
+                {
+                    <button class="btn btn-secondary btn-lg me-3" disabled>
+                        <i class="fas fa-times me-2"></i>Stokta Yok
+                    </button>
+                }
+                
+                <button class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-heart me-2"></i>Favorilere Ekle
+                </button>
+            </div>
+            
+            <div class="alert alert-info">
+                <i class="fas fa-truck me-2"></i>
+                <strong>Ücretsiz Kargo!</strong> 500 TL ve üzeri alışverişlerde kargo bedava.
+            </div>
+        </div>
+    </div>
+    
+    @if (ViewBag.RelatedProducts != null && ((List<ECommerceProject.Models.Product>)ViewBag.RelatedProducts).Any())
+    {
+        <div class="mt-5">
+            <h3 class="mb-4">Benzer Ürünler</h3>
+            <div class="row">
+                @foreach (var relatedProduct in ViewBag.RelatedProducts)
+                {
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="card h-100 product-card">
+                            <div class="product-image">
+                                @if (!string.IsNullOrEmpty(relatedProduct.ImageUrl))
+                                {
+                                    <img src="@relatedProduct.ImageUrl" class="card-img-top" alt="@relatedProduct.Name">
+                                }
+                                else
+                                {
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                        <i class="fas fa-image fa-3x text-muted"></i>
+                                    </div>
+                                }
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-title">@relatedProduct.Name</h6>
+                                <p class="card-text text-muted small">@relatedProduct.Category?.Name</p>
+                                <div class="product-price">
+                                    <span class="fw-bold text-primary">@relatedProduct.Price.ToString("F2") TL</span>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <a href="/Product/Details/@relatedProduct.Id" class="btn btn-outline-primary btn-sm w-100">Detaylar</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var maxQty = @Model.StockQuantity;
+            
+            $('#increase-qty').click(function() {
+                var currentQty = parseInt($('#quantity').val());
+                if (currentQty < maxQty) {
+                    $('#quantity').val(currentQty + 1);
+                }
+            });
+            
+            $('#decrease-qty').click(function() {
+                var currentQty = parseInt($('#quantity').val());
+                if (currentQty > 1) {
+                    $('#quantity').val(currentQty - 1);
+                }
+            });
+            
+            $('#quantity').change(function() {
+                var qty = parseInt($(this).val());
+                if (qty < 1) $(this).val(1);
+                if (qty > maxQty) $(this).val(maxQty);
+            });
+            
+            $('#add-to-cart-btn').click(function() {
+                var quantity = parseInt($('#quantity').val());
+                var productId = @Model.Id;
+                
+                $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Ekleniyor...');
+                
+                $.post('/Cart/AddToCart', { productId: productId, quantity: quantity }, function(response) {
+                    if (response.success) {
+                        $('#cart-count').text(response.cartCount);
+                        $('#add-to-cart-btn').html('<i class="fas fa-check me-2"></i>Sepete Eklendi!');
+                        
+                        setTimeout(function() {
+                            $('#add-to-cart-btn').prop('disabled', false).html('<i class="fas fa-shopping-cart me-2"></i>Sepete Ekle');
+                        }, 2000);
+                    } else {
+                        alert(response.message);
+                        $('#add-to-cart-btn').prop('disabled', false).html('<i class="fas fa-shopping-cart me-2"></i>Sepete Ekle');
+                    }
+                });
+            });
+        });
+    </script>
+}

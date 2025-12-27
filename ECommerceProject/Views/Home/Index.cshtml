@@ -1,0 +1,215 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<div class="hero-section bg-primary text-white py-5 mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">E-Ticaret Sitemize Hoş Geldiniz!</h1>
+                <p class="lead mb-4">En kaliteli ürünler, uygun fiyatlar ve güvenli alışveriş deneyimi için doğru adrestesiniz.</p>
+                <a href="/Product/Index" class="btn btn-light btn-lg me-3">Alışverişe Başla</a>
+                <a href="/Category/Index" class="btn btn-outline-light btn-lg">Kategoriler</a>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image text-center">
+                    <i class="fas fa-shopping-cart fa-10x opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="categories-section py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Popüler Kategoriler</h2>
+        <div class="row">
+            @if (ViewBag.Categories != null)
+            {
+                foreach (var kategori in ViewBag.Categories)
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 category-card">
+                            <div class="card-body text-center">
+                                <div class="category-icon mb-3">
+                                    <i class="fas fa-box fa-3x text-primary"></i>
+                                </div>
+                                <h5 class="card-title">@kategori.Name</h5>
+                                <p class="card-text">@kategori.Description</p>
+                                <a href="/Category/Products/@kategori.Id" class="btn btn-primary">Ürünleri Gör</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<div class="featured-products-section py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Öne Çıkan Ürünler</h2>
+        <div class="row">
+            @if (ViewBag.FeaturedProducts != null)
+            {
+                foreach (var urun in ViewBag.FeaturedProducts)
+                {
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="card h-100 product-card">
+                            <div class="product-image">
+                                @if (!string.IsNullOrEmpty(urun.ImageUrl))
+                                {
+                                    <img src="@urun.ImageUrl" class="card-img-top" alt="@urun.Name">
+                                }
+                                else
+                                {
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                        <i class="fas fa-image fa-3x text-muted"></i>
+                                    </div>
+                                }
+                                @if (urun.IsFeatured)
+                                {
+                                    <span class="badge bg-warning position-absolute top-0 start-0 m-2">Öne Çıkan</span>
+                                }
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">@urun.Name</h5>
+                                <p class="card-text text-muted small">@urun.Category?.Name</p>
+                                <div class="product-price">
+                                    @if (urun.DiscountedPrice != null && urun.DiscountedPrice.HasValue)
+                                    {
+                                        <span class="text-decoration-line-through text-muted">@urun.Price.ToString("F2") TL</span>
+                                        <span class="text-danger fw-bold">@urun.DiscountedPrice.Value.ToString("F2") TL</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fw-bold text-primary">@urun.Price.ToString("F2") TL</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary btn-sm add-to-cart" data-product-id="@urun.Id">
+                                        <i class="fas fa-shopping-cart me-1"></i>Sepete Ekle
+                                    </button>
+                                    <a href="/Product/Details/@urun.Id" class="btn btn-outline-primary btn-sm">Detaylar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<div class="new-products-section py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Yeni Eklenenler</h2>
+        <div class="row">
+            @if (ViewBag.NewProducts != null)
+            {
+                foreach (var urun in ViewBag.NewProducts)
+                {
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="card h-100 product-card">
+                            <div class="product-image">
+                                @if (!string.IsNullOrEmpty(urun.ImageUrl))
+                                {
+                                    <img src="@urun.ImageUrl" class="card-img-top" alt="@urun.Name">
+                                }
+                                else
+                                {
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                        <i class="fas fa-image fa-3x text-muted"></i>
+                                    </div>
+                                }
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">@urun.Name</h5>
+                                <p class="card-text text-muted small">@urun.Category?.Name</p>
+                                <div class="product-price">
+                                    <span class="fw-bold text-primary">@urun.Price.ToString("F2") TL</span>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary btn-sm add-to-cart" data-product-id="@urun.Id">
+                                        <i class="fas fa-shopping-cart me-1"></i>Sepete Ekle
+                                    </button>
+                                    <a href="/Product/Details/@urun.Id" class="btn btn-outline-primary btn-sm">Detaylar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .category-card:hover {
+        transform: translateY(-5px);
+        transition: transform 0.3s ease;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .product-card:hover {
+        transform: translateY(-5px);
+        transition: transform 0.3s ease;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .product-image {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .product-image img {
+        height: 200px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    .product-card:hover .product-image img {
+        transform: scale(1.05);
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Sepete ekle butonları
+            $('.add-to-cart').click(function() {
+                var button = $(this);
+                var productId = button.data('product-id');
+                
+                button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Eklendi...');
+                
+                $.post('/Cart/AddToCart', { productId: productId, quantity: 1 }, function(response) {
+                    if (response.success) {
+                        $('#cart-count').text(response.cartCount);
+                        button.html('<i class="fas fa-check me-1"></i>Eklendi!');
+                        
+                        setTimeout(function() {
+                            button.prop('disabled', false).html('<i class="fas fa-shopping-cart me-1"></i>Sepete Ekle');
+                        }, 2000);
+                    } else {
+                        alert(response.message);
+                        button.prop('disabled', false).html('<i class="fas fa-shopping-cart me-1"></i>Sepete Ekle');
+                    }
+                });
+            });
+            
+            // Sepet sayısını yükle
+            $.get('/Cart/GetCartCount', function(count) {
+                $('#cart-count').text(count);
+            });
+        });
+    </script>
+}
