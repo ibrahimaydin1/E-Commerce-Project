@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://localhost:5214/sitemap.xml
+
+# Disallow specific paths
+Disallow: /Account/
+Disallow: /Admin/
+Disallow: /Checkout/
+Disallow: /Cart/
+Disallow: /Identity/
+
+# Allow specific paths
+Allow: /Account/Login
+Allow: /Account/Register
+
+# Crawl-delay
+Crawl-delay: 1

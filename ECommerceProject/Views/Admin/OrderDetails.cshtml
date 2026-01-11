@@ -1,0 +1,235 @@
+@model ECommerceProject.Models.Order
+@{
+    ViewData["Title"] = "Sipariş Detayı";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 text-gray-800">Sipariş Detayı</h1>
+                <div>
+                    <a href="/Admin/Orders" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Geri
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Müşteri Bilgileri -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Müşteri Bilgileri</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Ad Soyad:</strong> @Model.User?.FirstName @Model.User?.LastName</p>
+                            <p><strong>E-posta:</strong> @Model.User?.Email</p>
+                            <p><strong>Telefon:</strong> @Model.User?.PhoneNumber</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Adres:</strong> @Model.ShippingAddress</p>
+                            <p><strong>Şehir:</strong> @Model.ShippingCity</p>
+                            <p><strong>Posta Kodu:</strong> @Model.ShippingPostalCode</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sipariş Bilgileri -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Sipariş Bilgileri</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Sipariş No:</strong> @Model.OrderNumber</p>
+                            <p><strong>Sipariş Tarihi:</strong> @Model.OrderDate.ToString("dd.MM.yyyy HH:mm")</p>
+                            <p><strong>Sipariş Durumu:</strong> 
+                                <span class="badge bg-@GetStatusColor(Model.OrderStatus)">
+                                    @Model.OrderStatus
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Ödeme Durumu:</strong> 
+                                <span class="badge bg-@GetPaymentStatusColor(Model.PaymentStatus)">
+                                    @Model.PaymentStatus
+                                </span>
+                            </p>
+                            <p><strong>Kargo Takip No:</strong> @Model.TrackingNumber</p>
+                            <p><strong>Teslimat Tarihi:</strong> @(Model.DeliveryDate?.ToString("dd.MM.yyyy") ?? "-")</p>
+                        </div>
+                    </div>
+                    
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <div class="mt-3">
+                            <p><strong>Sipariş Notları:</strong></p>
+                            <p class="text-muted">@Model.Notes</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Ürünler -->
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Sipariş Ürünleri</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Ürün</th>
+                                    <th>SKU</th>
+                                    <th>Birim Fiyat</th>
+                                    <th>Miktar</th>
+                                    <th>Toplam</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                    <tr>
+                                        <td>
+                                            <strong>@item.ProductName</strong>
+                                            <br>
+                                            <small class="text-muted">@item.Product?.Description</small>
+                                        </td>
+                                        <td>@item.ProductSKU</td>
+                                        <td>@item.UnitPrice.ToString("F2") TL</td>
+                                        <td>@item.Quantity</td>
+                                        <td><strong>@item.TotalPrice.ToString("F2") TL</strong></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Durum Güncelleme -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Durum Güncelleme</h6>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="/Admin/OrderUpdateStatus/@Model.Id">
+                        <div class="mb-3">
+                            <label class="form-label">Sipariş Durumu</label>
+                            <select name="status" class="form-select">
+                                @if (Model.OrderStatus == OrderStatus.Pending) {
+                                    <option value="0" selected>Beklemede</option>
+                                } else {
+                                    <option value="0">Beklemede</option>
+                                }
+                                @if (Model.OrderStatus == OrderStatus.Confirmed) {
+                                    <option value="1" selected>Onaylandı</option>
+                                } else {
+                                    <option value="1">Onaylandı</option>
+                                }
+                                @if (Model.OrderStatus == OrderStatus.Processing) {
+                                    <option value="2" selected>Hazırlanıyor</option>
+                                } else {
+                                    <option value="2">Hazırlanıyor</option>
+                                }
+                                @if (Model.OrderStatus == OrderStatus.Shipped) {
+                                    <option value="3" selected>Kargoya Verildi</option>
+                                } else {
+                                    <option value="3">Kargoya Verildi</option>
+                                }
+                                @if (Model.OrderStatus == OrderStatus.Delivered) {
+                                    <option value="4" selected>Teslim Edildi</option>
+                                } else {
+                                    <option value="4">Teslim Edildi</option>
+                                }
+                                @if (Model.OrderStatus == OrderStatus.Cancelled) {
+                                    <option value="5" selected>İptal Edildi</option>
+                                } else {
+                                    <option value="5">İptal Edildi</option>
+                                }
+                                @if (Model.OrderStatus == OrderStatus.Returned) {
+                                    <option value="6" selected>İade Edildi</option>
+                                } else {
+                                    <option value="6">İade Edildi</option>
+                                }
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-save me-1"></i>Güncelle
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Özet -->
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Sipariş Özeti</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Ara Toplam:</span>
+                        <span>@Model.Subtotal.ToString("F2") TL</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Kargo:</span>
+                        <span>@(Model.ShippingAmount == 0 ? "Ücretsiz" : Model.ShippingAmount.ToString("F2") + " TL")</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>KDV:</span>
+                        <span>@Model.TaxAmount.ToString("F2") TL</span>
+                    </div>
+                    @if (Model.DiscountAmount > 0)
+                    {
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>İndirim:</span>
+                            <span class="text-success">-@Model.DiscountAmount.ToString("F2") TL</span>
+                        </div>
+                    }
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <h5>Genel Toplam:</h5>
+                        <h5 class="text-primary">@Model.TotalAmount.ToString("F2") TL</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetStatusColor(OrderStatus status)
+    {
+        return status switch
+        {
+            OrderStatus.Pending => "warning",
+            OrderStatus.Processing => "info",
+            OrderStatus.Shipped => "primary",
+            OrderStatus.Delivered => "success",
+            OrderStatus.Cancelled => "danger",
+            _ => "secondary"
+        };
+    }
+    
+    string GetPaymentStatusColor(PaymentStatus status)
+    {
+        return status switch
+        {
+            PaymentStatus.Pending => "warning",
+            PaymentStatus.Completed => "success",
+            PaymentStatus.Failed => "danger",
+            PaymentStatus.Refunded => "info",
+            _ => "secondary"
+        };
+    }
+}

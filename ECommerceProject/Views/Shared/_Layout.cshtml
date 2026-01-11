@@ -8,6 +8,7 @@
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/responsive.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ECommerceProject.styles.css" asp-append-version="true" />
 </head>
 <body>
@@ -29,6 +30,11 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Kategoriler</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="/Admin/Index">
+                                <i class="fas fa-cog"></i> Admin
+                            </a>
                         </li>
                     </ul>
                     <ul class="navbar-nav">

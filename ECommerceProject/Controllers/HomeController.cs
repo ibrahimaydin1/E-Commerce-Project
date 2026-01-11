@@ -17,41 +17,74 @@ public class HomeController : Controller
         _context = context;
     }
 
-    // Ana sayfa
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
+        ViewData["Title"] = "E-Commerce - Online Alışveriş Sitesi";
+        ViewData["Description"] = "En iyi ürünler uygun fiyatlarla. Online alışveriş deneyiminizi keşfedin.";
+        ViewData["Keywords"] = "e-ticaret, alışveriş, online satış, ürünler, indirim, kampanya";
+        ViewData["ImageUrl"] = "https://localhost:5214/images/logo.png";
+
+        var structuredData = @"
+        {
+            ""@context"": ""https://schema.org"",
+            ""@type"": ""WebSite"",
+            ""name"": ""E-Commerce"",
+            ""url"": ""https://localhost:5214"",
+            ""description"": ""Online alışveriş sitesi"",
+            ""potentialAction"": {
+                ""@type"": ""SearchAction"",
+                ""target"": ""https://localhost:5214/Product/Search?searchTerm={search_term_string}"",
+                ""query-input"": ""required name=search_term_string""
+            }
+        }";
+        ViewData["StructuredData"] = structuredData;
+
         try
         {
-            // Öne çıkan ürünleri getir
-            var onecikanUrunler = _context.Products
-                .Include(p => p.Category)
-                .Include(p => p.ProductImages)
-                .Where(p => p.IsFeatured == true && p.IsActive == true && p.StockQuantity > 0)
-                .Take(8)
-                .ToList();
+            var onecikanUrunler = new List<Product>();
+            var tumUrunler = _context.Products.ToList();
+            
+            for(int i = 0; i < tumUrunler.Count; i++)
+            {
+                var urun = tumUrunler[i];
+                if(urun.IsFeatured == true && urun.IsActive == true && urun.StockQuantity > 0)
+                {
+                    onecikanUrunler.Add(urun);
+                }
+                if(onecikanUrunler.Count >= 8) break;
+            }
 
-            // Yeni ürünleri getir
-            var yeniUrunler = _context.Products
-                .Include(p => p.Category)
-                .Include(p => p.ProductImages)
-                .Where(p => p.IsActive == true && p.StockQuantity > 0)
-                .OrderByDescending(p => p.CreatedAt)
-                .Take(8)
-                .ToList();
+            var yeniUrunler = new List<Product>();
+            var siraliUrunler = _context.Products.OrderByDescending(p => p.CreatedAt).ToList();
+            
+            foreach(var urun in siraliUrunler)
+            {
+                if(urun.IsActive == true && urun.StockQuantity > 0)
+                {
+                    yeniUrunler.Add(urun);
+                }
+                if(yeniUrunler.Count >= 8) break;
+            }
 
-            // Kategorileri getir
-            var kategoriler = _context.Categories
-                .Where(c => c.IsActive == true && c.ParentCategoryId == null)
-                .Take(6)
-                .ToList();
+            var kategoriler = new List<Category>();
+            var tumKategoriler = _context.Categories.ToList();
+            
+            foreach(var kategori in tumKategoriler)
+            {
+                if(kategori.IsActive == true && kategori.ParentCategoryId == null)
+                {
+                    kategoriler.Add(kategori);
+                }
+                if(kategoriler.Count >= 6) break;
+            }
 
             ViewBag.FeaturedProducts = onecikanUrunler;
             ViewBag.NewProducts = yeniUrunler;
             ViewBag.Categories = kategoriler;
         }
-        catch
+        catch(Exception ex)
         {
-            // Hata durumunda boş listeler gönder
+            Console.WriteLine("Hata olustu: " + ex.Message);
             ViewBag.FeaturedProducts = new List<Product>();
             ViewBag.NewProducts = new List<Product>();
             ViewBag.Categories = new List<Category>();

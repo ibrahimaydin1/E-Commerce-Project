@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ECommerceProject.Data;
 using ECommerceProject.Models;
+using ECommerceProject.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,12 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 })
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+// Add PaymentService
+builder.Services.AddScoped<PaymentService>();
+
+// Add EmailService
+builder.Services.AddScoped<EmailService>();
 
 // Add session support
 builder.Services.AddSession(options =>

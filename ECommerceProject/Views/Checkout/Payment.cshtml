@@ -1,0 +1,181 @@
+@model ECommerceProject.Controllers.PaymentViewModel
+@{
+    ViewData["Title"] = "Ödeme";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Kredi Kartı ile Ödeme</h4>
+                </div>
+                <div class="card-body">
+                    <form id="paymentForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Kart Üzerindeki İsim</label>
+                                <input type="text" class="form-control" id="cardHolderName" name="CardHolderName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Kart Numarası</label>
+                                <input type="text" class="form-control" id="cardNumber" name="CardNumber" maxlength="19" required>
+                                <small class="text-muted">Boşluksuz girin</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Son Kullanma Ayı</label>
+                                <select class="form-select" id="expireMonth" name="ExpireMonth" required>
+                                    <option value="">Ay</option>
+                                    <option value="01">01</option>
+                                    <option value="02">02</option>
+                                    <option value="03">03</option>
+                                    <option value="04">04</option>
+                                    <option value="05">05</option>
+                                    <option value="06">06</option>
+                                    <option value="07">07</option>
+                                    <option value="08">08</option>
+                                    <option value="09">09</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Son Kullanma Yılı</label>
+                                <select class="form-select" id="expireYear" name="ExpireYear" required>
+                                    <option value="">Yıl</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+                                    <option value="2027">2027</option>
+                                    <option value="2028">2028</option>
+                                    <option value="2029">2029</option>
+                                    <option value="2030">2030</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">CVC/CVV</label>
+                                <input type="text" class="form-control" id="cvc" name="Cvc" maxlength="3" required>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Test için:</strong> Kart numarası olarak 4242424242424242 kullanabilirsiniz.
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-lock me-2"></i>Güvenli Ödeme Yap
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Sipariş Özeti</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Sipariş No:</span>
+                        <span>@ViewBag.OrderNumber</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Toplam Tutar:</span>
+                        <span>@ViewBag.Amount.ToString("F2") TL</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <h5>Ödenecek Tutar:</h5>
+                        <h5 class="text-primary">@ViewBag.Amount.ToString("F2") TL</h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0">Güvenlik Bilgisi</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-shield-alt text-success me-2"></i>
+                        <span>SSL ile şifrelenmiş ödeme</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-lock text-success me-2"></i>
+                        <span>Güvenli ödeme altyapısı</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-credit-card text-success me-2"></i>
+                        <span>3D Secure destekli</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Kart numarası formatlama
+            $('#cardNumber').on('input', function() {
+                var value = $(this).val().replace(/\s/g, '');
+                var formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+                $(this).val(formattedValue);
+            });
+
+            // Sadece sayı girişi
+            $('#cardNumber, #cvc').on('input', function() {
+                $(this).val($(this).val().replace(/[^0-9]/g, ''));
+            });
+
+            // Form gönderimi
+            $('#paymentForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                var formData = {
+                    OrderNumber: '@ViewBag.OrderNumber',
+                    Amount: @ViewBag.Amount,
+                    Address: '@ViewBag.Address',
+                    CardHolderName: $('#cardHolderName').val(),
+                    CardNumber: $('#cardNumber').val().replace(/\s/g, ''),
+                    ExpireMonth: $('#expireMonth').val(),
+                    ExpireYear: $('#expireYear').val(),
+                    Cvc: $('#cvc').val()
+                };
+
+                // Loading göster
+                $('button[type="submit"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>İşleniyor...');
+
+                // Ödeme isteği gönder
+                $.ajax({
+                    url: '/Checkout/ProcessCardPayment',
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if (response.success) {
+                            // Başarılı ödeme
+                            window.location.href = '/Checkout/OrderConfirmation/@ViewBag.OrderId';
+                        } else {
+                            // Hata durumunda
+                            alert(response.message);
+                            $('button[type="submit"]').prop('disabled', false).html('<i class="fas fa-lock me-2"></i>Güvenli Ödeme Yap');
+                        }
+                    },
+                    error: function() {
+                        alert('Ödeme işlemi sırasında bir hata oluştu. Lütfen tekrar deneyin.');
+                        $('button[type="submit"]').prop('disabled', false).html('<i class="fas fa-lock me-2"></i>Güvenli Ödeme Yap');
+                    }
+                });
+            });
+        });
+    </script>
+}

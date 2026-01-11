@@ -1,0 +1,128 @@
+@model List<ECommerceProject.Models.Order>
+@{
+    ViewData["Title"] = "Sipariş Yönetimi";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 text-gray-800 mb-4">Sipariş Yönetimi</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Sipariş Listesi</h6>
+                </div>
+                <div class="card-body">
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Sipariş No</th>
+                                        <th>Müşteri</th>
+                                        <th>Tarih</th>
+                                        <th>Ürün Sayısı</th>
+                                        <th>Tutar</th>
+                                        <th>Durum</th>
+                                        <th>Ödeme</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var siparis in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@siparis.OrderNumber</strong>
+                                            </td>
+                                            <td>
+                                                @siparis.User?.FirstName @siparis.User?.LastName
+                                                <br>
+                                                <small class="text-muted">@siparis.User?.Email</small>
+                                            </td>
+                                            <td>@siparis.OrderDate.ToString("dd.MM.yyyy HH:mm")</td>
+                                            <td>@siparis.OrderItems.Count</td>
+                                            <td>
+                                                <strong>@siparis.TotalAmount.ToString("F2") TL</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-@GetStatusColor(siparis.OrderStatus)">
+                                                    @siparis.OrderStatus
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-@GetPaymentStatusColor(siparis.PaymentStatus)">
+                                                    @siparis.PaymentStatus
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a href="/Admin/OrderDetails/@siparis.Id" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <div class="btn-group" role="group">
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                                            <i class="fas fa-cog"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li><a class="dropdown-item" href="/Admin/OrderUpdateStatus/@siparis.Id?status=1">Onayla</a></li>
+                                                            <li><a class="dropdown-item" href="/Admin/OrderUpdateStatus/@siparis.Id?status=2">Hazırlanıyor</a></li>
+                                                            <li><a class="dropdown-item" href="/Admin/OrderUpdateStatus/@siparis.Id?status=3">Kargoya Ver</a></li>
+                                                            <li><a class="dropdown-item" href="/Admin/OrderUpdateStatus/@siparis.Id?status=4">Teslim Edildi</a></li>
+                                                            <li><hr class="dropdown-divider"></li>
+                                                            <li><a class="dropdown-item text-danger" href="/Admin/OrderUpdateStatus/@siparis.Id?status=5">İptal Et</a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-shopping-cart fa-5x text-gray-300 mb-3"></i>
+                            <h4 class="text-gray-500">Henüz sipariş bulunmuyor</h4>
+                            <p class="text-gray-400">Siparişler burada görünecek.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetStatusColor(OrderStatus status)
+    {
+        return status switch
+        {
+            OrderStatus.Pending => "warning",
+            OrderStatus.Processing => "info",
+            OrderStatus.Shipped => "primary",
+            OrderStatus.Delivered => "success",
+            OrderStatus.Cancelled => "danger",
+            _ => "secondary"
+        };
+    }
+    
+    string GetPaymentStatusColor(PaymentStatus status)
+    {
+        return status switch
+        {
+            PaymentStatus.Pending => "warning",
+            PaymentStatus.Completed => "success",
+            PaymentStatus.Failed => "danger",
+            PaymentStatus.Refunded => "info",
+            _ => "secondary"
+        };
+    }
+}

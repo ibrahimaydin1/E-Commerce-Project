@@ -90,6 +90,9 @@ namespace ECommerceProject.Models
 
         public string? Notes { get; set; }
 
+        [StringLength(50)]
+        public string? PaymentId { get; set; }
+
         public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 

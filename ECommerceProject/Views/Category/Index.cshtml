@@ -1,0 +1,43 @@
+@using System.Linq
+@{
+    ViewData["Title"] = "Kategoriler";
+}
+
+<div class="container py-5">
+    <h1 class="mb-4">Kategoriler</h1>
+    
+    @if (Model != null && Model.Count > 0)
+    {
+        <div class="row">
+            @foreach (var category in Model)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100">
+                        @if (!string.IsNullOrEmpty(category.ImageUrl))
+                        {
+                            <img src="@category.ImageUrl" class="card-img-top" alt="@category.Name">
+                        }
+                        else
+                        {
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="fas fa-folder fa-3x text-muted"></i>
+                            </div>
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@category.Name</h5>
+                            <p class="card-text">@category.Description</p>
+                            <a asp-area="" asp-controller="Category" asp-action="Products" asp-route-id="@category.Id" class="btn btn-primary">Ürünleri Gör</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            Henüz kategori eklenmemiş.
+        </div>
+    }
+</div>

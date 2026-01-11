@@ -41,27 +41,64 @@ namespace ECommerceProject.Controllers
             return View(urunler.ToList());
         }
 
-        // Ürün detayları
         public IActionResult Details(int id)
         {
-            var urun = _context.Products
-                .Include(p => p.Category)
-                .Include(p => p.ProductImages)
-                .FirstOrDefault(p => p.Id == id && p.IsActive == true);
+            var tumUrunler = _context.Products.ToList();
+            Product urun = null;
+            
+            foreach(var u in tumUrunler)
+            {
+                if(u.Id == id && u.IsActive == true)
+                {
+                    urun = u;
+                    break;
+                }
+            }
 
             if (urun == null)
             {
                 return NotFound();
             }
 
-            var benzerUrunler = _context.Products
-                .Include(p => p.ProductImages)
-                .Where(p => p.CategoryId == urun.CategoryId && 
-                           p.Id != urun.Id && 
-                           p.IsActive == true && 
-                           p.StockQuantity > 0)
-                .Take(4)
-                .ToList();
+            ViewData["Title"] = urun.Name + " - E-Commerce";
+            ViewData["Description"] = urun.Description.Substring(0, Math.Min(urun.Description.Length, 160)) + "...";
+            ViewData["Keywords"] = urun.Name + ", " + (urun.Category != null ? urun.Category.Name : "") + ", e-ticaret, alışveriş, " + urun.SKU;
+            ViewData["ImageUrl"] = urun.ImageUrl ?? "/images/default-product.jpg";
+
+            var structuredData = "{";
+            structuredData += "\"@context\": \"https://schema.org\",";
+            structuredData += "\"@type\": \"Product\",";
+            structuredData += "\"name\": \"" + urun.Name + "\",";
+            structuredData += "\"description\": \"" + urun.Description + "\",";
+            structuredData += "\"image\": \"" + ViewData["ImageUrl"] + "\",";
+            structuredData += "\"offers\": {";
+            structuredData += "\"@type\": \"Offer\",";
+            structuredData += "\"price\": \"" + urun.Price.ToString("F2") + "\",";
+            structuredData += "\"priceCurrency\": \"TRY\",";
+            structuredData += "\"availability\": \"" + (urun.StockQuantity > 0 ? "InStock" : "OutOfStock") + "\"";
+            structuredData += "},";
+            structuredData += "\"brand\": {";
+            structuredData += "\"@type\": \"Brand\",";
+            structuredData += "\"name\": \"E-Commerce\"";
+            structuredData += "},";
+            structuredData += "\"category\": \"" + (urun.Category != null ? urun.Category.Name : "") + "\"";
+            structuredData += "}";
+            ViewData["StructuredData"] = structuredData;
+
+            var benzerUrunler = new List<Product>();
+            var kategoriUrunleri = _context.Products.ToList();
+            
+            foreach(var u in kategoriUrunleri)
+            {
+                if(u.CategoryId == urun.CategoryId && 
+                   u.Id != urun.Id && 
+                   u.IsActive == true && 
+                   u.StockQuantity > 0)
+                {
+                    benzerUrunler.Add(u);
+                }
+                if(benzerUrunler.Count >= 4) break;
+            }
 
             ViewBag.RelatedProducts = benzerUrunler;
 

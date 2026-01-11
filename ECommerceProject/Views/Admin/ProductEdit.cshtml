@@ -1,0 +1,142 @@
+@model ECommerceProject.Controllers.ProductEditViewModel
+@{
+    ViewData["Title"] = Model.Id == 0 ? "Yeni Ürün" : "Ürün Düzenle";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 text-gray-800 mb-4">@(Model.Id == 0 ? "Yeni Üün" : "Ürün Düzenle")</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Ürün Bilgileri</h6>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Name" class="form-label">Ürün Adı</label>
+                                <input asp-for="Name" class="form-control" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="SKU" class="form-label">SKU</label>
+                                <input asp-for="SKU" class="form-control" />
+                                <span asp-validation-for="SKU" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Price" class="form-label">Fiyat (TL)</label>
+                                <input asp-for="Price" class="form-control" type="number" step="0.01" />
+                                <span asp-validation-for="Price" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="StockQuantity" class="form-label">Stok Miktarı</label>
+                                <input asp-for="StockQuantity" class="form-control" type="number" />
+                                <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="CategoryId" class="form-label">Kategori</label>
+                                <select asp-for="CategoryId" class="form-select">
+                                    <option value="">Kategori Seçin</option>
+                                    @foreach (var kategori in Model.Kategoriler)
+                                    {
+                                        <option value="@kategori.Value">@kategori.Text</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ImageUrl" class="form-label">Resim URL</label>
+                                <input asp-for="ImageUrl" class="form-control" placeholder="https://..." />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Açıklama</label>
+                            <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="IsFeatured" class="form-check-input" />
+                                <label asp-for="IsFeatured" class="form-check-label">Öne Çıkan Ürün</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="/Admin/Products" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>Geri
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Önizleme</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <img src="@Model.ImageUrl" alt="Ürün Resmi" style="max-width: 200px; max-height: 200px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <div style="width: 200px; height: 200px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                <i class="fas fa-image fa-3x text-gray-400"></i>
+                            </div>
+                        }
+                    </div>
+                    
+                    <h5>@Model.Name</h5>
+                    <p class="text-muted">@Model.Description</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="h4 text-primary">@Model.Price.ToString("F2") TL</span>
+                        <span class="badge bg-info">Stok: @Model.StockQuantity</span>
+                    </div>
+                    
+                    @if (Model.IsFeatured)
+                    {
+                        <div class="mb-2">
+                            <span class="badge bg-warning">Öne Çıkan</span>
+                        </div>
+                    }
+                    
+                    <div class="text-muted small">
+                        <p><strong>SKU:</strong> @Model.SKU</p>
+                        @if (Model.Kategoriler != null)
+                        {
+                            var kategori = Model.Kategoriler.FirstOrDefault(k => k.Value == Model.CategoryId.ToString());
+                            if (kategori != null)
+                            {
+                                <p><strong>Kategori:</strong> @kategori.Text</p>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

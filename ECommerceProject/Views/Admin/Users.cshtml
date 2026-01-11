@@ -1,0 +1,99 @@
+@model List<ECommerceProject.Models.ApplicationUser>
+@{
+    ViewData["Title"] = "Kullanıcı Yönetimi";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 text-gray-800 mb-4">Kullanıcı Yönetimi</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Kullanıcı Listesi</h6>
+                </div>
+                <div class="card-body">
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Kullanıcı</th>
+                                        <th>E-posta</th>
+                                        <th>Telefon</th>
+                                        <th>Rol</th>
+                                        <th>Kayıt Tarihi</th>
+                                        <th>Durum</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var kullanici in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@kullanici.FirstName @kullanici.LastName</strong>
+                                            </td>
+                                            <td>@kullanici.Email</td>
+                                            <td>@kullanici.PhoneNumber</td>
+                                            <td>
+                                                @if (kullanici.Role == "Admin")
+                                                {
+                                                    <span class="badge bg-danger">Admin</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-primary">Kullanıcı</span>
+                                                }
+                                            </td>
+                                            <td>@kullanici.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                            <td>
+                                                @if (kullanici.IsActive)
+                                                {
+                                                    <span class="badge bg-success">Aktif</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Pasif</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <button type="button" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-outline-info">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    @if (kullanici.Role != "Admin")
+                                                    {
+                                                        <button type="button" class="btn btn-sm btn-outline-danger">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-users fa-5x text-gray-300 mb-3"></i>
+                            <h4 class="text-gray-500">Henüz kullanıcı bulunmuyor</h4>
+                            <p class="text-gray-400">Kayıtlı kullanıcılar burada görünecek.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

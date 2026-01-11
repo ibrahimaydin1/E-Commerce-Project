@@ -36,7 +36,7 @@
                                 </div>
                                 <h5 class="card-title">@kategori.Name</h5>
                                 <p class="card-text">@kategori.Description</p>
-                                <a href="/Category/Products/@kategori.Id" class="btn btn-primary">Ürünleri Gör</a>
+                                <a asp-area="" asp-controller="Category" asp-action="Products" asp-route-id="@kategori.Id" class="btn btn-primary">Ürünleri Gör</a>
                             </div>
                         </div>
                     </div>

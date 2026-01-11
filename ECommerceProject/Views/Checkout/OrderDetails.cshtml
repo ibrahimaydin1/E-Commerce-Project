@@ -1,0 +1,144 @@
+@model ECommerceProject.Models.Order
+@{
+    ViewData["Title"] = "Sipariş Detayı";
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+            <li class="breadcrumb-item"><a href="/Checkout/OrderHistory">Sipariş Geçmişi</a></li>
+            <li class="breadcrumb-item active">Sipariş Detayı</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Sipariş Bilgileri</h5>
+                    <div>
+                        <span class="badge bg-@GetStatusColor(Model.OrderStatus)">@Model.OrderStatus</span>
+                        <span class="badge bg-@GetPaymentStatusColor(Model.PaymentStatus)">@Model.PaymentStatus</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Sipariş No:</strong><br>
+                            @Model.OrderNumber
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Sipariş Tarihi:</strong><br>
+                            @Model.OrderDate.ToString("dd.MM.yyyy HH:mm")
+                        </div>
+                    </div>
+                    
+                    @if (!string.IsNullOrEmpty(Model.ShippingAddress))
+                    {
+                        <div class="mb-3">
+                            <strong>Teslimat Adresi:</strong><br>
+                            @Model.ShippingAddress
+                        </div>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <div class="mb-3">
+                            <strong>Sipariş Notları:</strong><br>
+                            @Model.Notes
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Sipariş Ürünleri</h5>
+                </div>
+                <div class="card-body">
+                    @foreach (var item in Model.OrderItems)
+                    {
+                        <div class="row mb-3 pb-3 border-bottom">
+                            <div class="col-md-8">
+                                <h6>@item.ProductName</h6>
+                                <p class="text-muted small mb-0">@item.ProductSKU</p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <div>@item.Quantity x @item.UnitPrice.ToString("F2") TL</div>
+                                <div class="fw-bold">@item.TotalPrice.ToString("F2") TL</div>
+                            </div>
+                        </div>
+                    }
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-8">
+                            <strong>Ara Toplam:</strong>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            @Model.Subtotal.ToString("F2") TL
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <strong>Kargo:</strong>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            @(Model.ShippingAmount == 0 ? "Ücretsiz" : Model.ShippingAmount.ToString("F2") + " TL")
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <strong>KDV:</strong>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            @Model.TaxAmount.ToString("F2") TL
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5>Genel Toplam:</h5>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <h5 class="text-primary">@Model.TotalAmount.ToString("F2") TL</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetStatusColor(OrderStatus status)
+    {
+        return status switch
+        {
+            OrderStatus.Pending => "warning",
+            OrderStatus.Processing => "info",
+            OrderStatus.Shipped => "primary",
+            OrderStatus.Delivered => "success",
+            OrderStatus.Cancelled => "danger",
+            _ => "secondary"
+        };
+    }
+    
+    string GetPaymentStatusColor(PaymentStatus status)
+    {
+        return status switch
+        {
+            PaymentStatus.Pending => "warning",
+            PaymentStatus.Completed => "success",
+            PaymentStatus.Failed => "danger",
+            PaymentStatus.Refunded => "info",
+            _ => "secondary"
+        };
+    }
+}

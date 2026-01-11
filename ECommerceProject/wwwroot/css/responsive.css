@@ -1,0 +1,344 @@
+/* Responsive Tasarım İyileştirmeleri */
+
+/* Genel Responsive Ayarlar */
+.container {
+    max-width: 100%;
+    padding: 0 15px;
+}
+
+/* Navbar Responsive */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .navbar-nav {
+        text-align: center;
+    }
+    
+    .nav-item {
+        margin: 5px 0;
+    }
+    
+    #cart-count {
+        position: relative;
+        top: -8px;
+        right: 5px;
+    }
+}
+
+/* Ana Sayfa Responsive */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 2rem 0;
+        text-align: center;
+    }
+    
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .product-card {
+        margin-bottom: 1rem;
+    }
+    
+    .category-card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Ürün Kartları Responsive */
+.product-card {
+    transition: transform 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+@media (max-width: 576px) {
+    .product-card .card-body {
+        padding: 1rem;
+    }
+    
+    .product-card h5 {
+        font-size: 1rem;
+    }
+    
+    .product-card .price {
+        font-size: 1.1rem;
+    }
+}
+
+/* Sepet Responsive */
+.cart-table {
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .cart-table {
+        display: none;
+    }
+    
+    .cart-mobile {
+        display: block !important;
+    }
+    
+    .cart-summary {
+        margin-top: 2rem;
+    }
+}
+
+/* Checkout Responsive */
+.checkout-form {
+    padding: 1rem;
+}
+
+@media (max-width: 768px) {
+    .checkout-form .row {
+        margin-bottom: 1rem;
+    }
+    
+    .checkout-form .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Admin Panel Responsive */
+.admin-sidebar {
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+@media (max-width: 768px) {
+    .admin-sidebar {
+        position: relative;
+        min-height: auto;
+    }
+    
+    .admin-content {
+        margin-left: 0;
+    }
+    
+    .admin-card {
+        margin-bottom: 1rem;
+    }
+    
+    .admin-table {
+        font-size: 0.8rem;
+    }
+    
+    .admin-table th,
+    .admin-table td {
+        padding: 0.5rem;
+    }
+}
+
+/* Sipariş Geçmişi Responsive */
+.order-card {
+    margin-bottom: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+}
+
+@media (max-width: 768px) {
+    .order-card .card-body {
+        padding: 1rem;
+    }
+    
+    .order-card .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .order-card .btn-group .btn {
+        margin-bottom: 0.25rem;
+    }
+}
+
+/* Ürün Detay Responsive */
+.product-detail {
+    padding: 1rem;
+}
+
+@media (max-width: 768px) {
+    .product-detail .product-image {
+        margin-bottom: 2rem;
+    }
+    
+    .product-detail .product-info {
+        text-align: center;
+    }
+    
+    .product-detail .quantity-selector {
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+    
+    .product-detail .add-to-cart {
+        width: 100%;
+    }
+}
+
+/* Footer Responsive */
+footer {
+    padding: 2rem 0;
+}
+
+@media (max-width: 768px) {
+    footer {
+        text-align: center;
+    }
+    
+    footer .row {
+        text-align: center;
+    }
+    
+    footer .social-links {
+        justify-content: center;
+        margin-top: 1rem;
+    }
+}
+
+/* Mobil Özel İyileştirmeler */
+@media (max-width: 576px) {
+    .btn {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .form-control {
+        font-size: 0.9rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    h2 {
+        font-size: 1.3rem;
+    }
+    
+    h3 {
+        font-size: 1.1rem;
+    }
+}
+
+/* Tablet İyileştirmeler */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .product-card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .admin-table {
+        font-size: 0.9rem;
+    }
+}
+
+/* Large Desktop İyileştirmeler */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+}
+
+/* Loading ve Animasyonlar */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Form İyileştirmeleri */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .form-group {
+        margin-bottom: 0.75rem;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+    }
+}
+
+/* Alert İyileştirmeleri */
+.alert {
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .alert {
+        font-size: 0.9rem;
+        padding: 0.75rem;
+    }
+}
+
+/* Badge İyileştirmeleri */
+.badge {
+    font-size: 0.75em;
+}
+
+@media (max-width: 768px) {
+    .badge {
+        font-size: 0.7em;
+    }
+}
+
+/* Modal İyileştirmeleri */
+.modal-dialog {
+    margin: 1rem;
+}
+
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+}
+
+/* Pagination İyileştirmeleri */
+.pagination {
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .pagination {
+        justify-content: center;
+    }
+    
+    .pagination .page-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
+}

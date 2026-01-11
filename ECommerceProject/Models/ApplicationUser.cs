@@ -43,5 +43,6 @@ namespace ECommerceProject.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? LastLoginDate { get; set; }
         public bool IsActive { get; set; } = true;
+        public string? Role { get; set; }
     }
 }
