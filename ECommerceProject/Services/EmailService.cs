@@ -52,7 +52,7 @@ namespace ECommerceProject.Services
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Email gonderilemedi: " + ex.Message);
+                Console.WriteLine("E-posta gönderilemedi: " + ex.Message);
                 return false;
             }
         }
@@ -92,7 +92,7 @@ namespace ECommerceProject.Services
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Status email gonderilemedi: " + ex.Message);
+                Console.WriteLine("Durum e-postası gönderilemedi: " + ex.Message);
                 return false;
             }
         }
@@ -132,7 +132,7 @@ namespace ECommerceProject.Services
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Welcome email gonderilemedi: " + ex.Message);
+                Console.WriteLine("Hoş geldin e-postası gönderilemedi: " + ex.Message);
                 return false;
             }
         }
